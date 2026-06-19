@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDF捺印アプリ</title>
+  <title>PDFサインアプリ</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="app-header">
-    <h1>📄 PDF捺印アプリ</h1>
-    <p class="subtitle">PDFを取り込み、選択した箇所に印鑑を捺印できます。ファイルはブラウザ内だけで処理され、外部に送信されません。</p>
+    <h1>✍️ PDFサインアプリ</h1>
+    <p class="subtitle">PDFを取り込み、選択した箇所にサインを記入できます。ファイルはブラウザ内だけで処理され、外部に送信されません。</p>
   </header>
 
   <main class="layout">
@@ -25,61 +25,63 @@
       </section>
 
       <section class="panel">
-        <h2>2. 印鑑を準備する</h2>
+        <h2>2. サインを準備する</h2>
         <div class="tabs">
-          <button class="tab tab--active" data-tab="generate">電子印鑑を作成</button>
+          <button class="tab tab--active" data-tab="draw">手書きサイン</button>
           <button class="tab" data-tab="upload">画像を使う</button>
         </div>
 
-        <!-- 電子印鑑生成 -->
-        <div class="tab-panel" id="tab-generate">
-          <label class="field">
-            <span>印影の文字（1〜4文字推奨）</span>
-            <input type="text" id="stampText" value="承認" maxlength="6" />
-          </label>
-          <label class="field">
-            <span>形</span>
-            <select id="stampShape">
-              <option value="circle">丸印</option>
-              <option value="square">角印</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>色</span>
-            <input type="color" id="stampColor" value="#d32020" />
-          </label>
-          <button class="btn" id="makeStampBtn">この印鑑を使う</button>
+        <!-- 手書きサイン -->
+        <div class="tab-panel" id="tab-draw">
+          <p class="hint">下の枠内にマウスや指でサインを書いてください。</p>
+          <div class="sign-pad-wrap">
+            <canvas id="signPad" class="sign-pad" width="600" height="220"></canvas>
+          </div>
+          <div class="sign-controls">
+            <label class="field field--inline">
+              <span>ペンの色</span>
+              <input type="color" id="penColor" value="#0b3d91" />
+            </label>
+            <label class="field field--inline">
+              <span>太さ</span>
+              <input type="range" id="penWidth" min="1" max="10" value="3" />
+            </label>
+          </div>
+          <div class="sign-buttons">
+            <button class="btn btn--ghost" id="clearPadBtn">消去</button>
+            <button class="btn" id="useSignBtn">このサインを使う</button>
+          </div>
         </div>
 
         <!-- 画像アップロード -->
         <div class="tab-panel hidden" id="tab-upload">
           <label class="file-drop" id="imgDrop">
             <input type="file" id="imgInput" accept="image/png,image/jpeg" hidden />
-            <span class="file-drop__text">印鑑画像(PNG/JPG)を選択</span>
+            <span class="file-drop__text">サイン画像(PNG/JPG)を選択</span>
           </label>
-          <p class="hint">背景が透明なPNG画像がおすすめです。</p>
+          <p class="hint">背景が透明なPNG画像がおすすめです。印鑑画像を使うこともできます。</p>
         </div>
 
         <div class="stamp-preview-wrap">
-          <span class="hint">現在の印鑑：</span>
-          <div class="stamp-preview" id="stampPreview"><span class="hint">未設定</span></div>
+          <span class="hint">現在のサイン：</span>
+          <div class="stamp-preview stamp-preview--wide" id="stampPreview"><span class="hint">未設定</span></div>
         </div>
       </section>
 
       <section class="panel">
-        <h2>3. 捺印する</h2>
-        <p class="hint">PDF上をクリックすると印鑑を配置できます。配置後はドラッグで移動できます。</p>
+        <h2>3. サインする</h2>
+        <p class="hint">PDF上をクリックするとサインを配置できます。配置後はドラッグで移動できます。</p>
         <label class="field">
-          <span>印鑑サイズ：<output id="sizeOut">120</output> px</span>
-          <input type="range" id="sizeRange" min="40" max="300" value="120" />
+          <span>サインのサイズ：<output id="sizeOut">160</output> px</span>
+          <input type="range" id="sizeRange" min="40" max="400" value="160" />
         </label>
-        <button class="btn btn--ghost" id="undoBtn" disabled>↩ 直前の捺印を取り消す</button>
-        <button class="btn btn--ghost" id="clearBtn" disabled>すべての捺印を消去</button>
+        <button class="btn btn--ghost" id="undoBtn" disabled>↩ 直前のサインを取り消す</button>
+        <button class="btn btn--ghost" id="clearBtn" disabled>すべてのサインを消去</button>
       </section>
 
       <section class="panel">
         <h2>4. 保存する</h2>
-        <button class="btn btn--primary" id="downloadBtn" disabled>捺印済みPDFをダウンロード</button>
+        <button class="btn btn--primary" id="downloadBtn" disabled>サイン済みPDFをダウンロード</button>
       </section>
     </aside>
 

@@ -107,7 +107,29 @@ body {
 .tab--active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .tab-panel.hidden { display: none; }
 
-/* Stamp preview */
+/* Signature pad */
+.sign-pad-wrap {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    repeating-linear-gradient(0deg, transparent, transparent 43px, #eef0f3 43px, #eef0f3 44px);
+  overflow: hidden;
+}
+.sign-pad {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: crosshair;
+}
+.sign-controls { display: flex; gap: 12px; margin-top: 10px; }
+.field--inline { flex: 1; margin-bottom: 0; }
+.field--inline input[type="color"] { height: 30px; }
+.sign-buttons { display: flex; gap: 8px; margin-top: 12px; }
+.sign-buttons .btn { flex: 1; }
+
+/* Stamp / signature preview */
 .stamp-preview-wrap { margin-top: 12px; display: flex; align-items: center; gap: 10px; }
 .stamp-preview {
   width: 64px; height: 64px;
@@ -117,6 +139,7 @@ body {
   background: #fff;
   overflow: hidden;
 }
+.stamp-preview--wide { width: 140px; }
 .stamp-preview img { max-width: 100%; max-height: 100%; }
 
 /* Viewer */
