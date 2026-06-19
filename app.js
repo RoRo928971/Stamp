@@ -50,13 +50,21 @@
     downloadBtn.disabled = !state.pdfBytes || !hasStamps;
   }
 
+  // ファイル種別の判定（モバイルやクラウド経由で MIME が空/不正な場合は拡張子で判定）
+  const isPdf = (file) =>
+    file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  const isStampImage = (file) =>
+    /^image\/(png|jpe?g)$/.test(file.type) || /\.(png|jpe?g)$/i.test(file.name);
+
   // ============ PDF 取り込み ============
   pdfDrop.addEventListener("click", () => pdfInput.click());
   pdfInput.addEventListener("change", (e) => {
-    if (e.target.files[0]) loadPdf(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) loadPdf(file);
+    e.target.value = ""; // 同じファイルを再選択できるようにリセット
   });
   setupDrop(pdfDrop, (file) => {
-    if (file.type === "application/pdf") loadPdf(file);
+    if (isPdf(file)) loadPdf(file);
     else toast("PDFファイルを選択してください");
   });
 
@@ -229,11 +237,13 @@
 
   // 画像アップロード
   $("imgInput").addEventListener("change", (e) => {
-    if (e.target.files[0]) loadStampImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) loadStampImage(file);
+    e.target.value = "";
   });
   $("imgDrop").addEventListener("click", () => $("imgInput").click());
   setupDrop($("imgDrop"), (file) => {
-    if (/^image\/(png|jpeg)$/.test(file.type)) loadStampImage(file);
+    if (isStampImage(file)) loadStampImage(file);
     else toast("PNGまたはJPG画像を選択してください");
   });
 

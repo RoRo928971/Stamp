@@ -91,6 +91,14 @@ body {
   transition: border-color 0.15s, background 0.15s;
 }
 .file-drop:hover, .file-drop.dragover { border-color: var(--accent); background: #f0f6ff; }
+/* input は display:none にすると iOS でプログラムから開けないため、視覚的にのみ隠す */
+.file-drop input[type="file"] {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 .file-name { font-size: 12px; color: var(--text); margin: 8px 0 0; word-break: break-all; }
 
 /* Tabs */

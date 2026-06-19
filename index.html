@@ -17,10 +17,10 @@
     <aside class="sidebar">
       <section class="panel">
         <h2>1. PDFを取り込む</h2>
-        <label class="file-drop" id="pdfDrop">
-          <input type="file" id="pdfInput" accept="application/pdf" hidden />
-          <span class="file-drop__text">クリックまたはドラッグでPDFを選択</span>
-        </label>
+        <div class="file-drop" id="pdfDrop">
+          <input type="file" id="pdfInput" accept="application/pdf,.pdf" />
+          <span class="file-drop__text">タップまたはドラッグでPDFを選択</span>
+        </div>
         <p class="file-name" id="pdfName"></p>
       </section>
 
@@ -55,10 +55,10 @@
 
         <!-- 画像アップロード -->
         <div class="tab-panel hidden" id="tab-upload">
-          <label class="file-drop" id="imgDrop">
-            <input type="file" id="imgInput" accept="image/png,image/jpeg" hidden />
+          <div class="file-drop" id="imgDrop">
+            <input type="file" id="imgInput" accept="image/png,image/jpeg,.png,.jpg,.jpeg" />
             <span class="file-drop__text">サイン画像(PNG/JPG)を選択</span>
-          </label>
+          </div>
           <p class="hint">背景が透明なPNG画像がおすすめです。印鑑画像を使うこともできます。</p>
         </div>
 
