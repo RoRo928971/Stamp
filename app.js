@@ -34,6 +34,9 @@
   const clearBtn = $("clearBtn");
   const downloadBtn = $("downloadBtn");
   const toastEl = $("toast");
+  const downloadSignBtn = $("downloadSignBtn");
+  const saveSignBtn = $("saveSignBtn");
+  const savedSignsEl = $("savedSigns");
 
   // ---- ユーティリティ ----
   function toast(msg) {
@@ -270,7 +273,87 @@
     const img = new Image();
     img.src = stamp.dataUrl;
     stampPreview.appendChild(img);
+    downloadSignBtn.disabled = false;
+    saveSignBtn.disabled = false;
   }
+
+  // ---- サインの保存（画像ダウンロード / 端末内保存） ----
+  const SAVED_KEY = "pdfsign.saved.v1";
+
+  function loadSaved() {
+    try {
+      return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+  function persistSaved(list) {
+    try {
+      localStorage.setItem(SAVED_KEY, JSON.stringify(list));
+    } catch (e) {
+      toast("端末の保存容量が不足しています");
+    }
+  }
+
+  function renderSaved() {
+    const list = loadSaved();
+    savedSignsEl.innerHTML = "";
+    list.forEach((item) => {
+      const cell = document.createElement("div");
+      cell.className = "saved-sign";
+      cell.title = "タップでこのサインを使用";
+
+      const img = new Image();
+      img.src = item.dataUrl;
+      cell.appendChild(img);
+
+      const del = document.createElement("button");
+      del.className = "del";
+      del.textContent = "×";
+      del.title = "削除";
+      cell.appendChild(del);
+
+      cell.addEventListener("click", () => {
+        setStamp({ dataUrl: item.dataUrl, type: item.type, aspect: item.aspect });
+        toast("保存したサインを設定しました");
+      });
+      del.addEventListener("click", (e) => {
+        e.stopPropagation();
+        persistSaved(loadSaved().filter((x) => x.id !== item.id));
+        renderSaved();
+      });
+
+      savedSignsEl.appendChild(cell);
+    });
+  }
+
+  // 画像ファイルとして保存（ダウンロード）
+  downloadSignBtn.addEventListener("click", () => {
+    if (!state.stamp) return;
+    const ext = state.stamp.type === "jpg" ? "jpg" : "png";
+    const a = document.createElement("a");
+    a.href = state.stamp.dataUrl;
+    a.download = `signature.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast("サイン画像を保存しました");
+  });
+
+  // この端末に保存（次回ワンタップで再利用）
+  saveSignBtn.addEventListener("click", () => {
+    if (!state.stamp) return;
+    const list = loadSaved();
+    list.unshift({
+      id: Date.now(),
+      dataUrl: state.stamp.dataUrl,
+      type: state.stamp.type,
+      aspect: state.stamp.aspect,
+    });
+    persistSaved(list.slice(0, 20)); // 最大20件
+    renderSaved();
+    toast("この端末にサインを保存しました");
+  });
 
   // ============ サイン（配置） ============
   function onPageClick(e) {
@@ -532,5 +615,6 @@
   // 初期化
   state.defaultSize = Number(sizeRange.value);
   sizeOut.textContent = sizeRange.value;
+  renderSaved();
   setButtonsState();
 })();
