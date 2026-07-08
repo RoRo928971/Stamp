@@ -115,27 +115,74 @@ body {
 .tab--active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .tab-panel.hidden { display: none; }
 
-/* Signature pad */
-.sign-pad-wrap {
+/* Signature modal */
+.btn--pad { padding: 14px 12px; font-size: 15px; }
+
+.sign-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(17, 24, 39, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.sign-modal.hidden { display: none; }
+
+.sign-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 100%;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+.sign-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sign-modal__title { font-size: 14px; color: var(--muted); }
+.sign-modal__close {
+  width: 32px; height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #eef0f3;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.sign-modal__canvas-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 55vh;
   border: 1px solid var(--border);
   border-radius: 8px;
   background:
     linear-gradient(#fff, #fff) padding-box,
-    repeating-linear-gradient(0deg, transparent, transparent 43px, #eef0f3 43px, #eef0f3 44px);
+    repeating-linear-gradient(0deg, transparent, transparent 63px, #eef0f3 63px, #eef0f3 64px);
   overflow: hidden;
 }
-.sign-pad {
+.sign-modal__canvas-wrap canvas {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   touch-action: none;
   cursor: crosshair;
 }
-.sign-controls { display: flex; gap: 12px; margin-top: 10px; }
+
+.sign-modal__controls { display: flex; gap: 12px; }
 .field--inline { flex: 1; margin-bottom: 0; }
 .field--inline input[type="color"] { height: 30px; }
-.sign-buttons { display: flex; gap: 8px; margin-top: 12px; }
-.sign-buttons .btn { flex: 1; }
+.sign-modal__buttons { display: flex; gap: 8px; }
+.sign-modal__buttons .btn { flex: 1; }
 
 /* Stamp / signature preview */
 .stamp-preview-wrap { margin-top: 12px; display: flex; align-items: center; gap: 10px; }

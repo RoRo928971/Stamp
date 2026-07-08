@@ -33,24 +33,8 @@
 
         <!-- 手書きサイン -->
         <div class="tab-panel" id="tab-draw">
-          <p class="hint">下の枠内にマウスや指でサインを書いてください。</p>
-          <div class="sign-pad-wrap">
-            <canvas id="signPad" class="sign-pad" width="600" height="220"></canvas>
-          </div>
-          <div class="sign-controls">
-            <label class="field field--inline">
-              <span>ペンの色</span>
-              <input type="color" id="penColor" value="#0b3d91" />
-            </label>
-            <label class="field field--inline">
-              <span>太さ</span>
-              <input type="range" id="penWidth" min="1" max="10" value="3" />
-            </label>
-          </div>
-          <div class="sign-buttons">
-            <button class="btn btn--ghost" id="clearPadBtn">消去</button>
-            <button class="btn" id="useSignBtn">このサインを使う</button>
-          </div>
+          <p class="hint">ボタンを押すと全画面のサイン記入画面が開きます。</p>
+          <button class="btn btn--pad" id="openPadBtn">✍️ サインを書く</button>
         </div>
 
         <!-- 画像アップロード -->
@@ -103,6 +87,33 @@
       <div class="pages" id="pages"></div>
     </section>
   </main>
+
+  <!-- 全画面サイン記入モーダル -->
+  <div class="sign-modal hidden" id="signModal">
+    <div class="sign-modal__body">
+      <div class="sign-modal__header">
+        <span class="sign-modal__title">枠内にサインを書いてください</span>
+        <button class="sign-modal__close" id="closePadBtn" title="閉じる">×</button>
+      </div>
+      <div class="sign-modal__canvas-wrap" id="signPadWrap">
+        <canvas id="signPad"></canvas>
+      </div>
+      <div class="sign-modal__controls">
+        <label class="field field--inline">
+          <span>ペンの色</span>
+          <input type="color" id="penColor" value="#0b3d91" />
+        </label>
+        <label class="field field--inline">
+          <span>太さ</span>
+          <input type="range" id="penWidth" min="1" max="10" value="3" />
+        </label>
+      </div>
+      <div class="sign-modal__buttons">
+        <button class="btn btn--ghost" id="clearPadBtn">消去</button>
+        <button class="btn btn--primary" id="useSignBtn">このサインを使う</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast" id="toast"></div>
 

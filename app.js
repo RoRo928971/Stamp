@@ -134,14 +134,69 @@
     });
   });
 
-  // ---- 手書きサインパッド ----
+  // ---- 手書きサインパッド（全画面モーダル） ----
+  const signModal = $("signModal");
+  const padWrap = $("signPadWrap");
   const pad = $("signPad");
   const pctx = pad.getContext("2d");
-  pctx.lineCap = "round";
-  pctx.lineJoin = "round";
   let padDrawing = false;
   let padHasInk = false;
   let lastX = 0, lastY = 0;
+
+  // コンテナ実寸 × devicePixelRatio でキャンバスの内部解像度を設定
+  function sizeCanvas() {
+    const r = padWrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(r.width * dpr));
+    const h = Math.max(1, Math.round(r.height * dpr));
+    if (pad.width === w && pad.height === h) return;
+
+    // 描画内容を退避して復元（画面回転・リサイズ対策）
+    let saved = null;
+    if (padHasInk && pad.width > 0 && pad.height > 0) {
+      saved = document.createElement("canvas");
+      saved.width = pad.width;
+      saved.height = pad.height;
+      saved.getContext("2d").drawImage(pad, 0, 0);
+    }
+    pad.width = w;
+    pad.height = h;
+    pctx.lineCap = "round";
+    pctx.lineJoin = "round";
+    if (saved) pctx.drawImage(saved, 0, 0, w, h);
+  }
+
+  // ズーム・スクロール抑止（モーダル表示中のみ有効化）
+  const preventDefault = (e) => e.preventDefault();
+  function lockGestures() {
+    // iOS Safari のピンチズーム
+    document.addEventListener("gesturestart", preventDefault);
+    document.addEventListener("gesturechange", preventDefault);
+    // スクロール・ピンチの最終防衛線
+    document.addEventListener("touchmove", preventDefault, { passive: false });
+    document.body.style.overflow = "hidden";
+  }
+  function unlockGestures() {
+    document.removeEventListener("gesturestart", preventDefault);
+    document.removeEventListener("gesturechange", preventDefault);
+    document.removeEventListener("touchmove", preventDefault, { passive: false });
+    document.body.style.overflow = "";
+  }
+
+  function openPad() {
+    signModal.classList.remove("hidden");
+    lockGestures();
+    sizeCanvas();
+    window.addEventListener("resize", sizeCanvas);
+  }
+  function closePad() {
+    signModal.classList.add("hidden");
+    unlockGestures();
+    window.removeEventListener("resize", sizeCanvas);
+  }
+
+  $("openPadBtn").addEventListener("click", openPad);
+  $("closePadBtn").addEventListener("click", closePad);
 
   // ポインタ座標 → キャンバス内部座標
   function padPos(e) {
@@ -154,6 +209,7 @@
   }
 
   pad.addEventListener("pointerdown", (e) => {
+    if (!e.isPrimary) return; // 2本目以降の指では描かない
     e.preventDefault();
     padDrawing = true;
     pad.setPointerCapture(e.pointerId);
@@ -171,7 +227,7 @@
   });
 
   pad.addEventListener("pointermove", (e) => {
-    if (!padDrawing) return;
+    if (!padDrawing || !e.isPrimary) return;
     const p = padPos(e);
     pctx.beginPath();
     pctx.moveTo(lastX, lastY);
@@ -206,6 +262,7 @@
       type: "png",
       aspect: trimmed.width / trimmed.height,
     });
+    closePad();
     toast("サインを設定しました");
   });
 
